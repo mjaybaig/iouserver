@@ -1,10 +1,11 @@
 var express = require('express');
 var router = express.Router();
 var mongojs = require('mongojs');
-var db = mongojs('mongodb://localhost:27017/redditclone', ['Articles']);
+var db = mongojs('mongodb://localhost:27017/meansamp', ['Articles']);
 
 
 router.get('/articles', function(req, res, next){
+    console.log("Getting articles");
     db.Articles.find(function(err, Articles){
         if(err){
             res.send(err);
@@ -38,14 +39,16 @@ router.post('/article', function(req, res, next){
 });
 
 router.put('/article/:id', function(req, res, next){
+    console.log("In router put");
     var article = req.body;
     var updObj = {};
 
     if(article.votes){
         updObj.votes = article.votes;
+        console.log("Article votes in server: "+updObj.votes);
     }
     if(article.title){
-        upObj.title = article.title;
+        updObj.title = article.title;
     }
     if(article.link){
         updObj.link = article.link;
@@ -70,17 +73,17 @@ router.put('/article/:id', function(req, res, next){
     }
 });
 
-// router.delete('/todo/:id', function(req, res){
-//     db.todos.remove({
-//         _id:mongojs.ObjectId(req.params.id)
-//     }, '', function(err, result){
-//         if(err){
-//             res.send(err);
-//         }
-//         else{
-//             res.json(result);
-//         }
-//     });
-// });
+router.delete('/article/:id', function(req, res){
+    db.Articles.remove({
+        _id:mongojs.ObjectId(req.params.id)
+    }, '', function(err, result){
+        if(err){
+            res.send(err);
+        }
+        else{
+            res.json(result);
+        }
+    });
+});
 
 module.exports = router;
