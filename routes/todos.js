@@ -41,33 +41,35 @@ router.put('/article/:id', function(req, res, next){
     var article = req.body;
     var updObj = {};
 
-    if(article.votes){
-        updObj.votes = article.votes;
-    }
-    if(article.title){
-        upObj.title = article.title;
-    }
-    if(article.link){
-        updObj.link = article.link;
-    }
-    if(!updObj){
-        res.status(400);
-        res.json({
-            "Error": "Invalid Data"
-        });
-    }
-    else{
-        db.Articles.update({
-            _id: mongojs.ObjectId(req.params.id)
-        }, updObj, {}, function(err, result){
-            if(err){
-                res.send(err);
-            }
-            else{
-                res.json(result);
-            }
-        });
-    }
+    console.log(article.votes);
+
+    // if(article.votes){
+    //     updObj.votes = article.votes;
+    // }
+    // if(article.title){
+    //     updObj.title = article.title;
+    // }
+    // if(article.link){
+    //     updObj.link = article.link;
+    // }
+    // if(!updObj){
+    //     res.status(400);
+    //     res.json({
+    //         "Error": "Invalid Data"
+    //     });
+    // }
+    // else{
+    //     db.Articles.update({
+    //         _id: mongojs.ObjectId(req.params.id)
+    //     }, updObj, {}, function(err, result){
+    //         if(err){
+    //             res.send(err);
+    //         }
+    //         else{
+    //             res.json(result);
+    //         }
+    //     });
+    // }
 });
 
 // router.delete('/todo/:id', function(req, res){
