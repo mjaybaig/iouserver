@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var mongojs = require('mongojs');
-var db = mongojs('mongodb://localhost:27017/meansamp', ['Articles']);
+var db = mongojs('mongodb://localhost:27017/redditclone', ['Articles']);
 
 
 router.get('/articles', function(req, res, next){
@@ -20,7 +20,7 @@ router.post('/article', function(req, res, next){
     var article = req.body;
     article.votes = 0;
     console.log(article);
-    if(!article.title || !article.link){
+    if(!article.title || !article.link || !article.detail){
         res.status(400);
         res.json({
             "Error": "Invalid Data"
