@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var mongojs = require('mongojs');
-var db = mongojs('mongodb://localhost:27017/meansamp', ['Articles']);
+var db = mongojs('mongodb://localhost:27017/redditclone', ['Articles']);
 
 
 router.get('/articles', function(req, res, next){
@@ -16,11 +16,37 @@ router.get('/articles', function(req, res, next){
     });
 });
 
+/* GET One Todo with the provided ID */
+router.get('/article/:id', function(req, res, next) {
+    db.Articles.findOne({
+        _id: mongojs.ObjectId(req.params.id)
+    }, function(err, article) {
+        if (err) {
+            res.send(err);
+        } else {
+            res.json(article);
+        }
+    });
+});
+
+router.get('/article/:id', function(req, res, next){
+    console.log("Getting article");
+    db.Articles.find(function(err, Articles){
+        if(err){
+            res.send(err);
+        }
+        else{
+            res.json(Articles);
+        }
+    });
+});
+
+
 router.post('/article', function(req, res, next){
     var article = req.body;
     article.votes = 0;
     console.log(article);
-    if(!article.title || !article.link){
+    if(!article.title || !article.link | !article.detail){
         res.status(400);
         res.json({
             "Error": "Invalid Data"
