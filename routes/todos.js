@@ -79,6 +79,9 @@ router.put('/article/:id', function(req, res, next){
     if(article.link){
         updObj.link = article.link;
     }
+    if(article.detail){
+        updObj.detail = article.detail;
+    }
     if(!updObj){
         res.status(400);
         res.json({
