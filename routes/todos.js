@@ -68,38 +68,7 @@ router.put('/article/:id', function(req, res, next){
     console.log("In router put");
     var article = req.body;
     var updObj = {};
-
-<<<<<<< HEAD
-    console.log(article.votes);
-
-    // if(article.votes){
-    //     updObj.votes = article.votes;
-    // }
-    // if(article.title){
-    //     updObj.title = article.title;
-    // }
-    // if(article.link){
-    //     updObj.link = article.link;
-    // }
-    // if(!updObj){
-    //     res.status(400);
-    //     res.json({
-    //         "Error": "Invalid Data"
-    //     });
-    // }
-    // else{
-    //     db.Articles.update({
-    //         _id: mongojs.ObjectId(req.params.id)
-    //     }, updObj, {}, function(err, result){
-    //         if(err){
-    //             res.send(err);
-    //         }
-    //         else{
-    //             res.json(result);
-    //         }
-    //     });
-    // }
-=======
+    
     if(article.votes){
         updObj.votes = article.votes;
         console.log("Article votes in server: "+updObj.votes);
@@ -131,7 +100,6 @@ router.put('/article/:id', function(req, res, next){
             }
         });
     }
->>>>>>> cc
 });
 
 router.delete('/article/:id', function(req, res){
