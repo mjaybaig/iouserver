@@ -46,7 +46,7 @@ router.post('/article', function(req, res, next){
     var article = req.body;
     article.votes = 0;
     console.log(article);
-    if(!article.title || !article.link | !article.detail){
+    if(!article.title || !article.link || !article.detail){
         res.status(400);
         res.json({
             "Error": "Invalid Data"
