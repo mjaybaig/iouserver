@@ -1,30 +1,38 @@
 var express = require('express');
 var router = express.Router();
 var mongojs = require('mongojs');
-var db = mongojs('mongodb://localhost:27017/redditclone', ['Articles']);
+var db = mongojs('mongodb://localhost:27017/iou', ['users']);
 
 
-router.get('/articles', function(req, res, next){
-    console.log("Getting articles");
-    db.Articles.find(function(err, Articles){
-        if(err){
-            res.send(err);
-        }
-        else{
-            res.json(Articles);
-        }
-    });
-});
+// router.get('/articles', function(req, res, next){
+//     console.log("Getting articles");
+//     db.Articles.find(function(err, Articles){
+//         if(err){
+//             res.send(err);
+//         }
+//         else{
+//             res.json(Articles);
+//         }
+//     });
+// });
 
-/* GET One Todo with the provided ID */
-router.get('/article/:id', function(req, res, next) {
-    db.Articles.findOne({
+/* GET all debts owed to specified user */
+router.get('/mydebts/:tofrom/:id', function(req, res, next) {
+    db.users.findOne({
         _id: mongojs.ObjectId(req.params.id)
-    }, function(err, article) {
+    }, function(err, user) {
         if (err) {
             res.send(err);
         } else {
-            res.json(article);
+            if(req.params.tofrom == 'to'){
+                res.json(user.owedtome);
+            }
+            else if(req.params.tofrom == 'from'){
+                res.json(user.owedbyme);
+            }
+            else{
+                res.sendStatus(404);
+            }
         }
     });
 });

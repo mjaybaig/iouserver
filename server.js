@@ -5,7 +5,7 @@ var cookieparser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var index = require('./routes/index');
-var todos = require('./routes/todos');
+var api = require('./routes/api');
 
 var app = express();
 
@@ -33,7 +33,7 @@ app.use(function(req, res, next) {
 });
 
 app.use('/', index);
-app.use('/api/v1', todos);
+app.use('/api', api);
 
 app.use(function(req, res, next){
     var err = new Error('Not Found');
