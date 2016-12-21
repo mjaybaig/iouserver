@@ -16,7 +16,7 @@ var db = mongojs('mongodb://localhost:27017/iou', ['users']);
 //     });
 // });
 
-/* GET all debts owed to specified user */
+/* GET all debts owed to/from specified user */
 router.get('/mydebts/:tofrom/:id', function(req, res, next) {
     db.users.findOne({
         _id: mongojs.ObjectId(req.params.id)
@@ -24,9 +24,11 @@ router.get('/mydebts/:tofrom/:id', function(req, res, next) {
         if (err) {
             res.send(err);
         } else {
+            //if client requested for all debts owed to username
             if(req.params.tofrom == 'to'){
                 res.json(user.owedtome);
             }
+            //if client requested for all debts owed from username
             else if(req.params.tofrom == 'from'){
                 res.json(user.owedbyme);
             }
@@ -37,58 +39,57 @@ router.get('/mydebts/:tofrom/:id', function(req, res, next) {
     });
 });
 
-router.get('/article/:id', function(req, res, next){
-    console.log("Getting article");
-    db.Articles.find(function(err, Articles){
-        if(err){
-            res.send(err);
-        }
-        else{
-            res.json(Articles);
-        }
-    });
-});
+// router.get('/article/:id', function(req, res, next){
+//     console.log("Getting article");
+//     db.Articles.find(function(err, Articles){
+//         if(err){
+//             res.send(err);
+//         }
+//         else{
+//             res.json(Articles);
+//         }
+//     });
+// });
 
 
-router.post('/article', function(req, res, next){
-    var article = req.body;
-    article.votes = 0;
-    console.log(article);
-    if(!article.title || !article.link || !article.detail){
-        res.status(400);
-        res.json({
-            "Error": "Invalid Data"
-        });
-    }
-    else{
-        db.Articles.save(article, function(err, result){
-            if(err){
-                res.send(err);
-            }
-            else{
-                res.json(result);
-            }
-        })
-    }
-});
+// router.post('/mydebts/:tofrom/:id', function(req, res, next){
+//     var debt = req.body;
+//     article.votes = 0;
+//     console.log(article);
+//     if(!article.title || !article.link || !article.detail){
+//         res.status(400);
+//         res.json({
+//             "Error": "Invalid Data"
+//         });
+//     }
+//     else{
+//         db.Articles.save(article, function(err, result){
+//             if(err){
+//                 res.send(err);
+//             }
+//             else{
+//                 res.json(result);
+//             }
+//         })
+//     }
+// });
 
-router.put('/article/:id', function(req, res, next){
-    console.log("In router put");
-    var article = req.body;
+//Add a new debt to a particular user
+
+router.put('/mydebts/:tofrom/:id', function(req, res, next){
+    console.log("In router put: "+req.params.id);
+    var debt = req.body;
     var updObj = {};
     
-    if(article.votes){
-        updObj.votes = article.votes;
-        console.log("Article votes in server: "+updObj.votes);
+    // if(debt.owedby){
+    //     updObj.owedby =debt.owedby;
+    //     console.log("debt name in server: "+debt.owedby);
+    // }
+    if(debt.name){
+        updObj.owedby = debt.name;
     }
-    if(article.title){
-        updObj.title = article.title;
-    }
-    if(article.link){
-        updObj.link = article.link;
-    }
-    if(article.detail){
-        updObj.detail = article.detail;
+    if(debt.amount){
+        updObj.amount = debt.amount;
     }
     if(!updObj){
         res.status(400);
@@ -97,30 +98,50 @@ router.put('/article/:id', function(req, res, next){
         });
     }
     else{
-        db.Articles.update({
-            _id: mongojs.ObjectId(req.params.id)
-        }, updObj, {}, function(err, result){
-            if(err){
-                res.send(err);
-            }
-            else{
-                res.json(result);
-            }
-        });
+        updObj.isClosed = 'false';
+        if(req.params.tofrom == 'to')
+        {
+            db.users.update(
+                { _id: mongojs.ObjectId(req.params.id)}, 
+                { $push: {'owedtome': updObj} }, 
+                {}, 
+                function(err, result){
+                    if(err){
+                        res.send(err);
+                    }
+                    else{
+                        res.json(result);
+                    }
+                }
+            );
+        }
+        else if(req.params.tofrom=='from')
+        {
+            db.users.update({
+                  _id: mongojs.ObjectId(req.params.id)
+            }, { $push: {'owedbyme': updObj}}, {}, function(err, result){
+                if(err){
+                    res.send(err);
+                }
+                else{
+                    res.json(result);
+                }
+            });
+        }
     }
 });
 
-router.delete('/article/:id', function(req, res){
-    db.Articles.remove({
-        _id:mongojs.ObjectId(req.params.id)
-    }, '', function(err, result){
-        if(err){
-            res.send(err);
-        }
-        else{
-            res.json(result);
-        }
-    });
-});
+// router.delete('/article/:id', function(req, res){
+//     db.Articles.remove({
+//         _id:mongojs.ObjectId(req.params.id)
+//     }, '', function(err, result){
+//         if(err){
+//             res.send(err);
+//         }
+//         else{
+//             res.json(result);
+//         }
+//     });
+// });
 
 module.exports = router;
