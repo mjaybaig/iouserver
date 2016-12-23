@@ -131,6 +131,66 @@ router.put('/mydebts/:tofrom/:id', function(req, res, next){
     }
 });
 
+
+//close a particular debt on a specified user
+router.put('/closedebt/:tofrom/:id', function(req, res, next){
+    console.log("In router putty: "+req.params.id);
+    var index = req.body.index;
+
+    //increasing index because stupid if statement treats 0 value as null
+    
+    // if(debt.owedby){
+    //     updObj.owedby =debt.owedby;
+    //     console.log("debt name in server: "+debt.owedby);
+    // }
+    console.log(index);
+    if(index === null){
+        res.status(400);
+        res.json({
+            "Error": "Invalid Data"
+        });
+    }
+    else{
+        if(req.params.tofrom == 'to')
+        {
+            var key = index;
+            var value = true;
+
+            var placeholder = {};
+            placeholder['owedtome.' + key+'.isClosed'] = value;
+            
+            db.users.update(
+                { _id: mongojs.ObjectId(req.params.id)}, 
+                { $set:placeholder}, 
+                {}, 
+                function(err, result){
+                    if(err){
+                        res.send(err);
+                    }
+                    else{
+                        console.log(result);
+                        res.json(result);
+                    }
+                }
+            );
+        }
+        else if(req.params.tofrom=='from')
+        {
+            db.users.update({
+                  _id: mongojs.ObjectId(req.params.id)
+            }, { $push: {'owedbyme': updObj}}, {}, function(err, result){
+                if(err){
+                    res.send(err);
+                }
+                else{
+                    res.json(result);
+                }
+            });
+        }
+    }
+});
+
+
 // router.delete('/article/:id', function(req, res){
 //     db.Articles.remove({
 //         _id:mongojs.ObjectId(req.params.id)
