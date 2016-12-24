@@ -1,8 +1,8 @@
 var express = require('express');
 var router = express.Router();
 var mongojs = require('mongojs');
-var db = mongojs('mongodb://localhost:27017/iou', ['users']);
-
+// var db = mongojs('mongodb://localhost:27017/iou', ['users']);
+var db = mongojs('mongodb://admin:baig5275@ds139198.mlab.com:39198/iou', ['users']);
 
 // router.get('/articles', function(req, res, next){
 //     console.log("Getting articles");
@@ -38,6 +38,7 @@ router.get('/mydebts/:tofrom/:id', function(req, res, next) {
         }
     });
 });
+
 
 // router.get('/article/:id', function(req, res, next){
 //     console.log("Getting article");
@@ -80,7 +81,7 @@ router.put('/mydebts/:tofrom/:id', function(req, res, next){
     console.log("In router put: "+req.params.id);
     var debt = req.body;
     var updObj = {};
-    
+
     // if(debt.owedby){
     //     updObj.owedby =debt.owedby;
     //     console.log("debt name in server: "+debt.owedby);
@@ -98,13 +99,13 @@ router.put('/mydebts/:tofrom/:id', function(req, res, next){
         });
     }
     else{
-        updObj.isClosed = 'false';
+        updObj.isClosed = false;
         if(req.params.tofrom == 'to')
         {
             db.users.update(
-                { _id: mongojs.ObjectId(req.params.id)}, 
-                { $push: {'owedtome': updObj} }, 
-                {}, 
+                { _id: mongojs.ObjectId(req.params.id)},
+                { $push: {'owedtome': updObj} },
+                {},
                 function(err, result){
                     if(err){
                         res.send(err);
@@ -138,7 +139,7 @@ router.put('/closedebt/:tofrom/:id', function(req, res, next){
     var index = req.body.index;
 
     //increasing index because stupid if statement treats 0 value as null
-    
+
     // if(debt.owedby){
     //     updObj.owedby =debt.owedby;
     //     console.log("debt name in server: "+debt.owedby);
@@ -158,11 +159,11 @@ router.put('/closedebt/:tofrom/:id', function(req, res, next){
 
             var placeholder = {};
             placeholder['owedtome.' + key+'.isClosed'] = value;
-            
+
             db.users.update(
-                { _id: mongojs.ObjectId(req.params.id)}, 
-                { $set:placeholder}, 
-                {}, 
+                { _id: mongojs.ObjectId(req.params.id)},
+                { $set:placeholder},
+                {},
                 function(err, result){
                     if(err){
                         res.send(err);
